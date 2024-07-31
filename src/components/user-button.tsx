@@ -21,6 +21,7 @@ import { Dot, LogOutIcon, Monitor, Moon, Sun, UserIcon } from "lucide-react";
 import { logout } from "@/app/(auth)/actions";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface UserButtonProps {
   className?: string;
@@ -29,6 +30,7 @@ interface UserButtonProps {
 export const UserButton: NextPage<UserButtonProps> = ({ className }) => {
   const { user } = useSession();
   const { theme, setTheme } = useTheme();
+  const queryClient = useQueryClient();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -74,7 +76,12 @@ export const UserButton: NextPage<UserButtonProps> = ({ className }) => {
           </DropdownMenuPortal>
         </DropdownMenuSub>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => logout()}>
+        <DropdownMenuItem
+          onClick={() => {
+            logout();
+            queryClient.clear();
+          }}
+        >
           <LogOutIcon className="mr-2 size-4" />
           Déconnexion
         </DropdownMenuItem>
