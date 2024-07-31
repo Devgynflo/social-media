@@ -5,18 +5,22 @@ import { NextPage } from "next";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { UserAvatar } from "@/components/user-avatar";
-import {
-  DropdownMenuItem,
-  DropdownMenuLabel,
-} from "@radix-ui/react-dropdown-menu";
+
 import Link from "next/link";
-import { LogOutIcon, UserIcon } from "lucide-react";
-import { logout } from "@/app/(auth)/action";
+import { Dot, LogOutIcon, Monitor, Moon, Sun, UserIcon } from "lucide-react";
+import { logout } from "@/app/(auth)/actions";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 interface UserButtonProps {
   className?: string;
@@ -24,6 +28,7 @@ interface UserButtonProps {
 
 export const UserButton: NextPage<UserButtonProps> = ({ className }) => {
   const { user } = useSession();
+  const { theme, setTheme } = useTheme();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -38,16 +43,38 @@ export const UserButton: NextPage<UserButtonProps> = ({ className }) => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <Link href={`/user/profile/${user.username}`}>
-          <DropdownMenuItem className="flex items-center gap-2 p-2">
+          <DropdownMenuItem>
             <UserIcon className="mr-2 size-4" />
             Mon profil
           </DropdownMenuItem>
         </Link>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <Monitor className="mr-2 size-4" />
+            Theme
+          </DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem onClick={() => setTheme("system")}>
+                <Monitor className="mr-2 size-4" />
+                Thème du systeme
+                {theme === "system" && <Dot className="ms-2 size-5" />}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("light")}>
+                <Sun className="mr-2 size-4" />
+                Thème clair
+                {theme === "light" && <Dot className="ms-2 size-5" />}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("dark")}>
+                <Moon className="mr-2 size-4" />
+                Thème sombre
+                {theme === "dark" && <Dot className="ms-2 size-5" />}
+              </DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => logout()}
-          className="flex items-center gap-2 p-2"
-        >
+        <DropdownMenuItem onClick={() => logout()}>
           <LogOutIcon className="mr-2 size-4" />
           Déconnexion
         </DropdownMenuItem>

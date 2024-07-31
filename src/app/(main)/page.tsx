@@ -1,4 +1,11 @@
+import { PostEditor } from "@/components/posts/editor/post-editor";
 
 export default function Home() {
-  return <div className="">Hello World</div>;
+  return (
+    <main className="h-[200vh] w-full bg-red-50">
+      <div className="w-full">
+        <PostEditor />
+      </div>
+    </main>
+  );
 }
