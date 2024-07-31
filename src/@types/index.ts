@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+
 export interface DatabaseUserAttributes {
   id: string;
   username: string;
@@ -12,3 +14,22 @@ export enum FormFieldType {
   SKELETON = "skeleton",
   PASSWORD = "password",
 }
+
+/* Prisma types */
+
+export const userDataSelect = {
+  id: true,
+  username: true,
+  displayName: true,
+  avatarUrl: true,
+} satisfies Prisma.UserSelect;
+
+export const postDataIncludeUser = {
+  author: {
+    select: userDataSelect,
+  },
+} satisfies Prisma.PostInclude;
+
+export type PostData = Prisma.PostGetPayload<{
+  include: typeof postDataIncludeUser;
+}>;
