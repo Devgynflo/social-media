@@ -74,7 +74,6 @@ const getTrendingTopics = unstable_cache(
             ORDER BY count DESC, hashtag ASC
             LIMIT 5
         `;
-    console.log("🚀 ~ result:", result);
 
     return result.map((row) => ({
       hashtag: row.hashtag,

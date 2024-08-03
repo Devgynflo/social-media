@@ -10,11 +10,18 @@ import { UserAvatar } from "@/components/user-avatar";
 import { useSession } from "@/hooks";
 import { Button } from "@/components/ui/button";
 import "./styles.css";
+import { useSubmitPostMutation } from "./mutation";
+import { LoadingButton } from "@/components/loading-button";
 
-interface PostEditorProps {}
+interface PostEditorProps {
+  immediatelyRender: boolean;
+}
 
-export const PostEditor: NextPage<PostEditorProps> = ({}) => {
+export const PostEditor: NextPage<PostEditorProps> = ({
+  immediatelyRender,
+}) => {
   const { user } = useSession();
+  const mutation = useSubmitPostMutation();
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -25,15 +32,19 @@ export const PostEditor: NextPage<PostEditorProps> = ({}) => {
         placeholder: "Tapez ici votre message",
       }),
     ],
+    immediatelyRender,
   });
   const input =
     editor?.getText({
       blockSeparator: "\n",
     }) || "";
 
-  async function onSubmit() {
-    await submitPost(input);
-    editor?.commands.clearContent();
+  function onSubmit() {
+    mutation.mutate(input, {
+      onSuccess: () => {
+        editor?.commands.clearContent();
+      },
+    });
   }
 
   return (
@@ -46,13 +57,14 @@ export const PostEditor: NextPage<PostEditorProps> = ({}) => {
         />
       </div>
       <div className="flex justify-end">
-        <Button
+        <LoadingButton
+          loading={mutation.isPending}
           onClick={onSubmit}
           disabled={!input.trim()}
           className="min-w-20"
         >
           Envoyer
-        </Button>
+        </LoadingButton>
       </div>
     </div>
   );

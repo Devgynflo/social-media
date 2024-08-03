@@ -43,7 +43,7 @@ export const SignUpForm: NextPage<SignUpFormProps> = ({}) => {
         <CustomFormField control={form.control} name='username' fieldType={FormFieldType.INPUT} label='Username' placeholder='Username' />
         <CustomFormField control={form.control} name='email' fieldType={FormFieldType.INPUT} label='Email' placeholder='Email' />
         <CustomFormField control={form.control} name='password' fieldType={FormFieldType.PASSWORD} label='Password' placeholder='********'  />
-        <LoadingButton type='submit' className='w-full' loading={isPending}>S'inscrire</LoadingButton>
+        <LoadingButton type='submit' className='w-full' loading={isPending}>S&apos;inscrire</LoadingButton>
     </form>
   </Form>
 }
