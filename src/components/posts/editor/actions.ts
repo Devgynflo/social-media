@@ -1,6 +1,6 @@
 "use server";
 
-import { postDataIncludeUser } from "@/@types";
+import { getPostDataIncludeUser } from "@/@types";
 import { validateRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { createPostSchema } from "@/lib/validation";
@@ -19,7 +19,7 @@ export async function submitPost(input: string) {
       content,
       authorId: user.id,
     },
-    include: postDataIncludeUser,
+    include: getPostDataIncludeUser(user.id),
   });
 
   return newPost;

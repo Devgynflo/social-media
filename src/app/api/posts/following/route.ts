@@ -13,10 +13,19 @@ export async function GET(req: NextRequest) {
     if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
     const posts = await prisma.post.findMany({
-      include: getPostDataIncludeUser(user.id),
+      where: {
+        author: {
+          followers: {
+            some: {
+              followerId: user.id,
+            },
+          },
+        },
+      },
       orderBy: { createdAt: "desc" },
       take: pageSize + 1,
       cursor: cursor ? { id: cursor } : undefined,
+      include: getPostDataIncludeUser(user.id),
     });
 
     const nextCursor = posts.length > pageSize ? posts[pageSize].id : null;

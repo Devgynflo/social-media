@@ -17,25 +17,46 @@ export enum FormFieldType {
 
 /* Prisma types */
 
-export const userDataSelect = {
-  id: true,
-  username: true,
-  displayName: true,
-  avatarUrl: true,
-} satisfies Prisma.UserSelect;
+export function getUserDataSelect(loggedInUserId: string) {
+  return {
+    id: true,
+    username: true,
+    displayName: true,
+    avatarUrl: true,
+    followers: {
+      where: {
+        followerId: loggedInUserId,
+      },
+      select: {
+        followerId: true,
+      },
+    },
+    _count: {
+      select: {
+        followers: true,
+      },
+    },
+  } satisfies Prisma.UserSelect;
+}
 
-export const postDataIncludeUser = {
-  author: {
-    select: userDataSelect,
-  },
-} satisfies Prisma.PostInclude;
+export function getPostDataIncludeUser(loggedInUserId: string) {
+  return {
+    author: {
+      select: getUserDataSelect(loggedInUserId),
+    },
+  } satisfies Prisma.PostInclude;
+}
 
 export type PostData = Prisma.PostGetPayload<{
-  include: typeof postDataIncludeUser;
+  include: ReturnType<typeof getPostDataIncludeUser>;
 }>;
 
 export interface PostPage {
   posts: PostData[];
   nextCursor: string | null;
-  
+}
+
+export interface FollowerInfo {
+  followers: number;
+  isFollowedByUser: boolean;
 }
