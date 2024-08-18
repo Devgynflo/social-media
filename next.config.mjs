@@ -12,6 +12,15 @@ const nextConfig = {
     },
   },
   serverExternalPackages: ["@node-rs/argon2"],
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "utfs.io",
+        pathname: `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/**`,
+      },
+    ],
+  },
 };
 // Import env here to validate during build.Using jiti we can import
 jiti("./env.ts");

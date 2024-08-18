@@ -34,8 +34,8 @@ export const FollowButton: NextPage<FollowButtonProps> = ({
 
       queryClient.setQueryData<FollowerInfo>(queryKey, () => ({
         followers:
-          previousState?.followers ||
-          0 + (previousState?.isFollowedByUser ? -1 : 1),
+          (previousState?.followers || 0) +
+          (previousState?.isFollowedByUser ? -1 : 1),
         isFollowedByUser: !previousState?.isFollowedByUser,
       }));
 

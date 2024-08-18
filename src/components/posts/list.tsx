@@ -6,6 +6,9 @@ import Link from "next/link";
 import { UserAvatar } from "../user-avatar";
 import { useSession } from "@/hooks";
 import { PostMoreButton } from "./post-more-button";
+import { formatRelativeDate } from "@/lib/utils";
+import Linkify from "../linkify";
+import UserTooltip from "../user-tooltip";
 
 interface PostListProps {
   post: PostData;
@@ -23,17 +26,20 @@ export const PostItem: NextPage<PostListProps> = ({ post }) => {
           </Link>
 
           <div className="">
-            <Link
-              href={`/users/${post.author?.username}`}
-              className="block font-medium hover:underline"
-            >
-              {post.author?.displayName}
-            </Link>
+            <UserTooltip user={post.author}>
+              <Link
+                href={`/users/${post.author?.username}`}
+                className="block font-medium hover:underline"
+              >
+                {post.author?.displayName}
+              </Link>
+            </UserTooltip>
+
             <Link
               href={`/posts/${post.id}`}
               className="block text-sm text-muted-foreground hover:underline"
             >
-              {/* {formatRelativeDate(post.createdAt)} */}
+              {formatRelativeDate(post.createdAt)}
             </Link>
           </div>
         </div>
@@ -44,7 +50,9 @@ export const PostItem: NextPage<PostListProps> = ({ post }) => {
           />
         )}
       </div>
-      <div className="whitespace-pre-line break-words">{post.content}</div>
+      <Linkify>
+        <div className="whitespace-pre-line break-words">{post.content}</div>
+      </Linkify>
     </article>
   );
 };

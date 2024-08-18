@@ -55,7 +55,7 @@ export type PostData = Prisma.PostGetPayload<{
 }>;
 
 export type UserData = Prisma.UserGetPayload<{
-  include: ReturnType<typeof getUserDataSelect>;
+  select: ReturnType<typeof getUserDataSelect>;
 }>;
 
 export interface PostPage {

@@ -2,15 +2,18 @@ import { FollowerInfo, getUserDataSelect, UserData } from "@/@types";
 import { FollowButton } from "@/components/follow-button";
 import FollowerCount from "@/components/follower-count";
 import { TrendsSidebar } from "@/components/trends-sidebar";
-import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/user-avatar";
+import { PostFeed } from "./_components/post-feed";
+import Linkify from "@/components/linkify";
+
 import { validateRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { formatNumber } from "@/lib/utils";
 import { formatDate } from "date-fns";
-import { Metadata, NextPage } from "next";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
+import { UserProfileButton } from "./_components/user-profile-button";
 
 interface PageProps {
   params: {
@@ -49,7 +52,7 @@ export async function generateMetadata({
   };
 }
 
-const Page: NextPage<PageProps> = async ({ params: { username } }) => {
+const Page = async ({ params: { username } }: PageProps) => {
   const { user: loggedInUser } = await validateRequest();
 
   if (!loggedInUser) return {};
@@ -64,8 +67,14 @@ const Page: NextPage<PageProps> = async ({ params: { username } }) => {
   }
   return (
     <main className="flex w-full min-w-0 gap-5">
-      <div className="flex w-full min-w-0 space-y-5">
+      <div className="w-full min-w-0 space-y-5">
         <UserProfile loggedInUserId={loggedInUser.id} user={user} />
+        <div className="rounded-2xl bg-card p-5 shadow-sm">
+          <h2 className="text-center text-2xl font-bold">
+            {user.displayName}&apos;s posts
+          </h2>
+        </div>
+        <PostFeed userId={user.id} />
       </div>
       <TrendsSidebar />
     </main>
@@ -74,17 +83,15 @@ const Page: NextPage<PageProps> = async ({ params: { username } }) => {
 
 export default Page;
 
-interface UserProfilProps {
+interface UserProfileProps {
   user: UserData;
   loggedInUserId: string;
 }
 
-function UserProfile({ user, loggedInUserId }: UserProfilProps) {
+function UserProfile({ user, loggedInUserId }: UserProfileProps) {
   const followerInfo: FollowerInfo = {
     followers: user._count.followers,
-    isFollowedByUser: user.followers.some(
-      (f) => f.followerId === loggedInUserId,
-    ),
+    isFollowedByUser: !!user.followers.length,
   };
 
   return (
@@ -100,7 +107,7 @@ function UserProfile({ user, loggedInUserId }: UserProfilProps) {
             <h1 className="text-3xl font-bold">{user.displayName}</h1>
             <div className="text-muted-foreground">@{user.username}</div>
           </div>
-          <div>Member since {formatDate(user.createdAt, "MMM d, yyyy")}</div>
+          <div>Membre depuis {formatDate(user.createdAt, "d/MM/yyyy")}</div>
           <div className="flex items-center gap-3">
             <span>
               Posts:{" "}
@@ -112,7 +119,7 @@ function UserProfile({ user, loggedInUserId }: UserProfilProps) {
           </div>
         </div>
         {user.id === loggedInUserId ? (
-          <Button>Editez le profil</Button>
+          <UserProfileButton user={user} />
         ) : (
           <FollowButton userId={user.id} initialState={followerInfo} />
         )}
@@ -120,9 +127,11 @@ function UserProfile({ user, loggedInUserId }: UserProfilProps) {
       {user.bio && (
         <>
           <hr />
-          <div className="overflow-hidden whitespace-pre-line break-words">
-            {user.bio}
-          </div>
+          <Linkify>
+            <div className="overflow-hidden whitespace-pre-line break-words">
+              {user.bio}
+            </div>
+          </Linkify>
         </>
       )}
     </div>

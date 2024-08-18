@@ -1,6 +1,6 @@
 "use server";
 
-import { postDataIncludeUser } from "@/@types";
+import { getPostDataIncludeUser } from "@/@types";
 import { validateRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
@@ -27,7 +27,7 @@ export const deletePost = async (id: string) => {
     where: {
       id,
     },
-    include: postDataIncludeUser,
+    include: getPostDataIncludeUser(user.id),
   });
 
   return deletedPost;
