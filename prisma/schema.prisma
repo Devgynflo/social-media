@@ -8,6 +8,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
 model User {
   id           String    @id
   username     String    @unique
@@ -21,8 +26,10 @@ model User {
   posts        Post[]
   following    Follow[]  @relation("following")
   followers    Follow[]  @relation("follower")
+  likes        Like[]
 
-  createdAt DateTime @default(now())
+  createdAt DateTime   @default(now())
+  Bookmark  Bookmark[]
 
   @@map("users")
 }
@@ -49,11 +56,47 @@ model Follow {
 }
 
 model Post {
-  id        String   @id @default(cuid())
-  content   String
-  createdAt DateTime @default(now())
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId  String
+  id          String     @id @default(cuid())
+  content     String
+  createdAt   DateTime   @default(now())
+  author      User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId    String
+  attachments Media[]
+  likes       Like[]
+  bookmarks   Bookmark[]
 
   @@map("posts")
+}
+
+model Media {
+  id        String    @id @default(cuid())
+  postId    String?
+  post      Post?     @relation(fields: [postId], references: [id], onDelete: SetNull)
+  url       String
+  type      MediaType
+  createdAt DateTime  @default(now())
+
+  @@map("media")
+}
+
+model Like {
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@map("likes")
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+  @@map("bookmarks")
 }

@@ -19,7 +19,7 @@ export const FollowButton: NextPage<FollowButtonProps> = ({
 }) => {
   const { data } = useFollowerInfo(userId, initialState);
   const { toast } = useToast();
-  const queryClient = useQueryClient(); // TODO: Optimistic
+  const queryClient = useQueryClient();
   const queryKey: QueryKey = ["follower-info", userId];
 
   const { mutate } = useMutation({
@@ -41,7 +41,7 @@ export const FollowButton: NextPage<FollowButtonProps> = ({
 
       return { previousState };
     },
-    onError(error, variables, context) {
+    onError(error, _variables, context) {
       console.log("🚀 ~ onError ~ error:", error);
       queryClient.setQueryData<FollowerInfo>(queryKey, context?.previousState);
       toast({

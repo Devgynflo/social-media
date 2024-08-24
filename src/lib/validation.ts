@@ -18,6 +18,7 @@ export const signInSchema = z.object({
 
 export const createPostSchema = z.object({
   content: requiredString,
+  mediaIds: z.array(z.string()).max(5, "5 média maximum"),
 });
 
 export const updateUserProfileSchema = z.object({

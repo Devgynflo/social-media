@@ -9,6 +9,9 @@ import { PostMoreButton } from "./post-more-button";
 import { formatRelativeDate } from "@/lib/utils";
 import Linkify from "../linkify";
 import UserTooltip from "../user-tooltip";
+import { MediaPreviews } from "./media-preview";
+import { LikeButton } from "./like-button";
+import { BookmarkButton } from "./bookmark-button";
 
 interface PostListProps {
   post: PostData;
@@ -36,8 +39,9 @@ export const PostItem: NextPage<PostListProps> = ({ post }) => {
             </UserTooltip>
 
             <Link
-              href={`/posts/${post.id}`}
+              href={`/post/${post.id}`}
               className="block text-sm text-muted-foreground hover:underline"
+              suppressHydrationWarning
             >
               {formatRelativeDate(post.createdAt)}
             </Link>
@@ -53,6 +57,27 @@ export const PostItem: NextPage<PostListProps> = ({ post }) => {
       <Linkify>
         <div className="whitespace-pre-line break-words">{post.content}</div>
       </Linkify>
+      {!!post.attachments.length && (
+        <MediaPreviews attachements={post.attachments} />
+      )}
+      <hr className="text-muted-foreground" />
+      <div className="flex justify-between gap-5">
+        <LikeButton
+          postId={post.id}
+          initialState={{
+            likes: post._count.likes,
+            isLikedByUser: post.likes.some((like) => like.userId === user.id),
+          }}
+        />
+        <BookmarkButton
+          postId={post.id}
+          initialState={{
+            isBookmarkedByUser: post.bookmarks.some(
+              (bookmark) => bookmark.userId === user.id,
+            ),
+          }}
+        />
+      </div>
     </article>
   );
 };

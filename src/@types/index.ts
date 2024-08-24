@@ -15,6 +15,24 @@ export enum FormFieldType {
   PASSWORD = "password",
 }
 
+export interface PostPage {
+  posts: PostData[];
+  nextCursor: string | null;
+}
+
+export interface FollowerInfo {
+  followers: number;
+  isFollowedByUser: boolean;
+}
+
+export interface LikeInfo {
+  likes: number;
+  isLikedByUser: boolean;
+}
+export interface BookmarkInfo {
+  isBookmarkedByUser: boolean;
+}
+
 /* Prisma types */
 
 export function getUserDataSelect(loggedInUserId: string) {
@@ -47,6 +65,28 @@ export function getPostDataIncludeUser(loggedInUserId: string) {
     author: {
       select: getUserDataSelect(loggedInUserId),
     },
+    attachments: true,
+    likes: {
+      where: {
+        userId: loggedInUserId,
+      },
+      select: {
+        userId: true,
+      },
+    },
+    bookmarks: {
+      where: {
+        userId: loggedInUserId,
+      },
+      select: {
+        userId: true,
+      },
+    },
+    _count: {
+      select: {
+        likes: true,
+      },
+    },
   } satisfies Prisma.PostInclude;
 }
 
@@ -57,13 +97,3 @@ export type PostData = Prisma.PostGetPayload<{
 export type UserData = Prisma.UserGetPayload<{
   select: ReturnType<typeof getUserDataSelect>;
 }>;
-
-export interface PostPage {
-  posts: PostData[];
-  nextCursor: string | null;
-}
-
-export interface FollowerInfo {
-  followers: number;
-  isFollowedByUser: boolean;
-}
