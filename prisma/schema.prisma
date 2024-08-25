@@ -27,6 +27,7 @@ model User {
   following    Follow[]  @relation("following")
   followers    Follow[]  @relation("follower")
   likes        Like[]
+  comments     Comment[]
 
   createdAt DateTime   @default(now())
   Bookmark  Bookmark[]
@@ -56,16 +57,32 @@ model Follow {
 }
 
 model Post {
-  id          String     @id @default(cuid())
-  content     String
-  createdAt   DateTime   @default(now())
-  author      User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId    String
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String
+
+  content String
+
   attachments Media[]
   likes       Like[]
   bookmarks   Bookmark[]
+  comments    Comment[]
 
   @@map("posts")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  content String
+
+  @@map("comments")
 }
 
 model Media {

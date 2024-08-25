@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const requiredString = z.string().trim().min(1, "Requis");
+const requiredString = z.string().trim().min(1, "Ce champ est requis");
 
 export const signUpSchema = z.object({
   email: requiredString.email("Adresse Email invalide"),
@@ -24,6 +24,10 @@ export const createPostSchema = z.object({
 export const updateUserProfileSchema = z.object({
   displayName: requiredString,
   bio: z.string().max(1000, "1000 caractères maximum"),
+});
+
+export const createCommenSchema = z.object({
+  content: requiredString,
 });
 
 export type SignUpValues = z.infer<typeof signUpSchema>;

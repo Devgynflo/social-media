@@ -20,6 +20,11 @@ export interface PostPage {
   nextCursor: string | null;
 }
 
+export interface CommentPage {
+  comments: CommentData[];
+  previousCursor: string | null;
+}
+
 export interface FollowerInfo {
   followers: number;
   isFollowedByUser: boolean;
@@ -85,15 +90,28 @@ export function getPostDataIncludeUser(loggedInUserId: string) {
     _count: {
       select: {
         likes: true,
+        comments: true,
       },
     },
   } satisfies Prisma.PostInclude;
 }
 
+export function getCommentDataIncludeUser(loggedInUserId: string) {
+  return {
+    user: {
+      select: getUserDataSelect(loggedInUserId),
+    },
+  } satisfies Prisma.CommentInclude;
+}
+
+export type UserData = Prisma.UserGetPayload<{
+  select: ReturnType<typeof getUserDataSelect>;
+}>;
+
 export type PostData = Prisma.PostGetPayload<{
   include: ReturnType<typeof getPostDataIncludeUser>;
 }>;
 
-export type UserData = Prisma.UserGetPayload<{
-  select: ReturnType<typeof getUserDataSelect>;
+export type CommentData = Prisma.CommentGetPayload<{
+  include: ReturnType<typeof getCommentDataIncludeUser>;
 }>;

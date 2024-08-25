@@ -12,6 +12,9 @@ import UserTooltip from "../user-tooltip";
 import { MediaPreviews } from "./media-preview";
 import { LikeButton } from "./like-button";
 import { BookmarkButton } from "./bookmark-button";
+import { useState } from "react";
+import { CommentButton } from "./comment-button";
+import { Comments } from "../comments";
 
 interface PostListProps {
   post: PostData;
@@ -19,6 +22,7 @@ interface PostListProps {
 
 export const PostItem: NextPage<PostListProps> = ({ post }) => {
   const { user } = useSession();
+  const [showComments, setShowComments] = useState<boolean>(false);
 
   return (
     <article className="group/post space-y-3 rounded-2xl bg-card p-5 shadow-sm">
@@ -32,7 +36,7 @@ export const PostItem: NextPage<PostListProps> = ({ post }) => {
             <UserTooltip user={post.author}>
               <Link
                 href={`/users/${post.author?.username}`}
-                className="block font-medium hover:underline"
+                className="font-mCommentItemedium block hover:underline"
               >
                 {post.author?.displayName}
               </Link>
@@ -62,13 +66,20 @@ export const PostItem: NextPage<PostListProps> = ({ post }) => {
       )}
       <hr className="text-muted-foreground" />
       <div className="flex justify-between gap-5">
-        <LikeButton
-          postId={post.id}
-          initialState={{
-            likes: post._count.likes,
-            isLikedByUser: post.likes.some((like) => like.userId === user.id),
-          }}
-        />
+        <div className="flex items-center gap-1">
+          <LikeButton
+            postId={post.id}
+            initialState={{
+              likes: post._count.likes,
+              isLikedByUser: post.likes.some((like) => like.userId === user.id),
+            }}
+          />
+
+          <CommentButton
+            post={post}
+            onClick={() => setShowComments((prev) => !prev)}
+          />
+        </div>
         <BookmarkButton
           postId={post.id}
           initialState={{
@@ -78,6 +89,7 @@ export const PostItem: NextPage<PostListProps> = ({ post }) => {
           }}
         />
       </div>
+      {showComments && <Comments post={post} />}
     </article>
   );
 };

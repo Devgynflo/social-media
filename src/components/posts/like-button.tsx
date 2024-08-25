@@ -75,9 +75,7 @@ export const LikeButton: NextPage<LikeButtonProps> = ({
         )}
       />
       {/* tabular-nums s'assure que la largeur soit la même pour un ou 2 chiffres*/}
-      <span className="text-sm font-medium tabular-nums">
-        {data.likes} <span className="hidden sm:inline">likes</span>
-      </span>
+      <span className="text-sm font-medium tabular-nums">{data.likes}</span>
     </Button>
   );
 };
