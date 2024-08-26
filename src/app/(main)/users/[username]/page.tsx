@@ -71,7 +71,7 @@ const Page = async ({ params: { username } }: PageProps) => {
         <UserProfile loggedInUserId={loggedInUser.id} user={user} />
         <div className="rounded-2xl bg-card p-5 shadow-sm">
           <h2 className="text-center text-2xl font-bold">
-            {user.displayName}&apos;s posts
+            Les posts de {user.displayName}
           </h2>
         </div>
         <PostFeed userId={user.id} />

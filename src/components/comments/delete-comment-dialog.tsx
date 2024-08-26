@@ -23,7 +23,7 @@ export const DeleteCommentDialog: NextPage<DeleteCommentDialogProps> = ({
   open,
   onClose,
 }) => {
-  const mutation = useDeleteCommentMutation(comment);
+  const mutation = useDeleteCommentMutation();
   function handleOpenChange() {
     if (!open && !mutation.isPending) {
       onClose();

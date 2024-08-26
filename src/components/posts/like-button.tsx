@@ -13,6 +13,7 @@ import kyInstance from "@/lib/ky";
 import { Button } from "../ui/button";
 import { HeartIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSession } from "@/hooks";
 
 interface LikeButtonProps {
   postId: string;
@@ -66,7 +67,9 @@ export const LikeButton: NextPage<LikeButtonProps> = ({
     <Button
       variant={"ghost"}
       className="flex items-center gap-2"
-      onClick={() => mutate()}
+      onClick={() => {
+        mutate();
+      }}
     >
       <HeartIcon
         className={cn(

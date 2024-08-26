@@ -3,10 +3,10 @@
 import { PostPage } from "@/@types";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { NextPage } from "next";
-import { PostItem } from "@/components/posts/list";
 import kyInstance from "@/lib/ky";
 import InfiniteScrollContainer from "@/components/infinite-scroll-container";
 import { PostsLoadingSkeleton } from "@/components/posts/posts-loading-skeleton";
+import { PostItem } from "@/components/posts/post-item";
 
 interface PostFeedProps {
   userId: string;

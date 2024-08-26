@@ -1,6 +1,6 @@
 import { getPostDataIncludeUser } from "@/@types";
 import { UserInfoSidebar } from "@/components/post/user-info-sidebar";
-import { PostItem } from "@/components/posts/list";
+import { PostItem } from "@/components/posts/post-item";
 import { validateRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Loader2Icon } from "lucide-react";

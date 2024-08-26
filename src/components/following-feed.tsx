@@ -3,7 +3,7 @@
 import { PostPage } from "@/@types";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { NextPage } from "next";
-import { PostItem } from "./posts/list";
+import { PostItem } from "./posts/post-item";
 import kyInstance from "@/lib/ky";
 import InfiniteScrollContainer from "./infinite-scroll-container";
 import { PostsLoadingSkeleton } from "./posts/posts-loading-skeleton";

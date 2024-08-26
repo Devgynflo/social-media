@@ -44,7 +44,7 @@ export const UserButton: NextPage<UserButtonProps> = ({ className }) => {
           Connecté en tant que @{user.username}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link href={`/user/profile/${user.username}`}>
+        <Link href={`/users/${user.username}`}>
           <DropdownMenuItem>
             <UserIcon className="mr-2 size-4" />
             Mon profil

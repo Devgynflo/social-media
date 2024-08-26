@@ -20,14 +20,28 @@ export async function submitComment({
 
   const { content: validatedContent } = createCommenSchema.parse({ content });
 
-  const newComment = await prisma.comment.create({
-    data: {
-      content: validatedContent,
-      postId: post.id,
-      userId: user.id,
-    },
-    include: getCommentDataIncludeUser(user.id),
-  });
+  const [newComment, _notification] = await prisma.$transaction([
+    prisma.comment.create({
+      data: {
+        content: validatedContent,
+        postId: post.id,
+        userId: user.id,
+      },
+      include: getCommentDataIncludeUser(user.id),
+    }),
+    ...(post.author.id !== user.id
+      ? [
+          prisma.notification.create({
+            data: {
+              recipientId: post.author.id,
+              issuerId: user.id,
+              type: "COMMENT",
+              postId: post.id,
+            },
+          }),
+        ]
+      : []),
+  ]);
 
   return newComment;
 }
@@ -52,7 +66,7 @@ export async function deleteComment({ id }: { id: string }) {
   if (comment.userId !== user.id) {
     throw new Error("Vous n'êtes pas autorisé à supprimer ce commentaire");
   }
-
+  /* TODO: Supprimer la notification si le message est supprimé par l'auteur */
   const deletedComment = await prisma.comment.delete({
     where: {
       id,
@@ -60,5 +74,5 @@ export async function deleteComment({ id }: { id: string }) {
     include: getCommentDataIncludeUser(user.id),
   });
 
-  return deletedComment;
+  return { postId: deletedComment.postId, id: deletedComment.id };
 }

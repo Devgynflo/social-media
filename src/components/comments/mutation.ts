@@ -72,14 +72,14 @@ export function useSubmitCommentMutation(postId: string) {
   return mutation;
 }
 
-export function useDeleteCommentMutation(comment: CommentData) {
+export function useDeleteCommentMutation() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: deleteComment,
-    onSuccess: async (deletedComment) => {
-      const queryKey: QueryKey = ["comments", deletedComment.postId];
+    onSuccess: async ({ postId, id }) => {
+      const queryKey: QueryKey = ["comments", postId];
 
       await queryClient.cancelQueries({ queryKey });
 
@@ -92,7 +92,7 @@ export function useDeleteCommentMutation(comment: CommentData) {
             pageParams: oldData.pageParams,
             pages: oldData.pages.map((page) => ({
               previousCursor: page.previousCursor,
-              comments: page.comments.filter((c) => c.id !== deletedComment.id),
+              comments: page.comments.filter((c) => c.id !== id),
             })),
           };
         },

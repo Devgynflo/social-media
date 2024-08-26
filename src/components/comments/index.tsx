@@ -45,7 +45,7 @@ export const Comments: NextPage<CommentsProps> = ({ post }) => {
         </Button>
       )}
       {status === "pending" && (
-        <Loader2Icon className="mx-auto size-5 animate-spin" />
+        <Loader2Icon className="mx-auto mt-4 size-5 animate-spin" />
       )}
       {status === "success" && !comments.length && (
         <p className="text-center text-muted-foreground">

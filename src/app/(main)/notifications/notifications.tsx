@@ -1,16 +1,21 @@
 "use client";
 
-import { PostPage } from "@/@types";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { NotificationPage, PostPage } from "@/@types";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { NextPage } from "next";
 import kyInstance from "@/lib/ky";
 import { PostsLoadingSkeleton } from "@/components/posts/posts-loading-skeleton";
 import InfiniteScrollContainer from "@/components/infinite-scroll-container";
-import { PostItem } from "@/components/posts/post-item";
+import { NotificationItem } from "./notification-item";
+import { useEffect } from "react";
 
-interface BookmarkFeedProps {}
+interface NotificationsProps {}
 
-export const BookmarkFeed: NextPage<BookmarkFeedProps> = ({}) => {
+export const Notifications: NextPage<NotificationsProps> = ({}) => {
   const {
     data,
     fetchNextPage,
@@ -19,26 +24,43 @@ export const BookmarkFeed: NextPage<BookmarkFeedProps> = ({}) => {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ["posts-feed", "bookmarks"],
+    queryKey: ["notifications"],
     queryFn: ({ pageParam }) =>
       kyInstance
         .get(
-          `/api/posts/bookmarked`,
+          `/api/notifications`,
           pageParam ? { searchParams: { cursor: pageParam } } : {},
         )
-        .json<PostPage>(),
+        .json<NotificationPage>(),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
+  const queryClient = useQueryClient();
 
-  const posts = data?.pages.flatMap((page) => page.posts) || [];
+  const { mutate } = useMutation({
+    mutationFn: () => kyInstance.patch("/api/notifications/mark-as-read"),
+    onSuccess: () => {
+      queryClient.setQueryData(["unread-notifications-count"], {
+        unreadCount: 0,
+      });
+    },
+    onError(error) {
+      console.log("🚀 ~ error => Failed to mark notification as read", error);
+    },
+  });
+
+  useEffect(() => {
+    mutate();
+  }, [mutate]);
+
+  const notifications = data?.pages.flatMap((page) => page.notifications) || [];
 
   if (status === "pending") return <PostsLoadingSkeleton />;
 
-  if (status === "success" && !posts.length && !hasNextPage) {
+  if (status === "success" && !notifications.length && !hasNextPage) {
     return (
       <p className="text-center text-muted-foreground">
-        Vous n&apos;avez pas encore ajouté de post à vos favoris
+        Vous n&apos;avez pas encore de notifications
       </p>
     );
   }
@@ -55,7 +77,9 @@ export const BookmarkFeed: NextPage<BookmarkFeedProps> = ({}) => {
       className="space-y-5"
       onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
     >
-      {posts?.map((post) => <PostItem key={post.id} post={post} />)}
+      {notifications?.map((notification) => (
+        <NotificationItem key={notification.id} notification={notification} />
+      ))}
       {isFetchingNextPage && <PostsLoadingSkeleton />}
     </InfiniteScrollContainer>
   );

@@ -25,6 +25,11 @@ export interface CommentPage {
   previousCursor: string | null;
 }
 
+export interface NotificationPage {
+  notifications: NotificationData[];
+  nextCursor: string | null;
+}
+
 export interface FollowerInfo {
   followers: number;
   isFollowedByUser: boolean;
@@ -36,6 +41,10 @@ export interface LikeInfo {
 }
 export interface BookmarkInfo {
   isBookmarkedByUser: boolean;
+}
+
+export interface UnreadNotificationCount {
+  unreadCount: number;
 }
 
 /* Prisma types */
@@ -103,6 +112,25 @@ export function getCommentDataIncludeUser(loggedInUserId: string) {
     },
   } satisfies Prisma.CommentInclude;
 }
+
+export const notificationInclude = {
+  issuer: {
+    select: {
+      username: true,
+      displayName: true,
+      avatarUrl: true,
+    },
+  },
+  post: {
+    select: {
+      content: true,
+    },
+  },
+} satisfies Prisma.NotificationInclude;
+
+export type NotificationData = Prisma.NotificationGetPayload<{
+  include: typeof notificationInclude;
+}>;
 
 export type UserData = Prisma.UserGetPayload<{
   select: ReturnType<typeof getUserDataSelect>;
