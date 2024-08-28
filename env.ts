@@ -7,6 +7,9 @@ const envVariables = z.object({
   CRON_SECRET: z.string(),
   NEXT_PUBLIC_STREAM_KEY: z.string(),
   STREAM_SECRET: z.string(),
+  GOOGLE_CLIENT_ID: z.string(),
+  GOOGLE_CLIENT_SECRET: z.string(),
+  NEXT_PUBLIC_BASE_URL: z.string(),
 });
 
 envVariables.parse(process.env);
