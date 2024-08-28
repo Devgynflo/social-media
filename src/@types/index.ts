@@ -47,6 +47,10 @@ export interface UnreadNotificationCount {
   unreadCount: number;
 }
 
+export interface UnreadMessageCount {
+  unreadCount: number;
+}
+
 /* Prisma types */
 
 export function getUserDataSelect(loggedInUserId: string) {
