@@ -21,6 +21,14 @@ const nextConfig = {
       },
     ],
   },
+  rewrites: () => {
+    return [
+      {
+        source: "/hashtag/:tag",
+        destination: "/search?q=%23:tag",
+      },
+    ];
+  },
 };
 // Import env here to validate during build.Using jiti we can import
 jiti("./env.ts");

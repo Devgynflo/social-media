@@ -43,7 +43,6 @@ export async function GET(
     }
 
     const data: LikeInfo = {
-      authorId: post.authorId,
       likes: post._count.likes,
       isLikedByUser: post.likes.some((like) => like.userId === loggedInUser.id),
     };
